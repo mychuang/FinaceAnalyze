@@ -32,8 +32,8 @@ for i in range(1,12):
 stockNo = '0056'
 stockData = stockCrawler(20100101, stockNo)
 
-#dataLoop = stockCrawler(20100201, stockNo)
+dataLoop = stockCrawler(20100201, stockNo)
 #stockData = pd.concat([data,dataLoop])
-#dataLoop = stockCrawler(20100301, stockNo)
+dataLoop = stockCrawler(20100301, stockNo)
 #data.append(dataLoop)
 
