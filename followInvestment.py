@@ -33,7 +33,7 @@ import matplotlib.ticker as ticker
 
 #plot close
 fig = plt.figure(figsize=(16,12)) #create figure
-ax = fig.add_subplot(2, 1, 1) #create ax within figure
+ax = fig.add_subplot(1, 1, 1) #create ax within figure
 
 ax.plot(stock0050['date'], stock0050['close'], color='red',label='close')
 
@@ -46,26 +46,29 @@ ax.grid(which='minor', axis='both')
 ax.set_title('0050 daily-K',fontsize=18)
 ax.set_ylabel('stock price', fontsize='x-large',fontstyle='oblique')
 #ax.set_xlabel('date', fontsize=18,fontfamily = 'sans-serif',fontstyle='italic')
-ax.legend(fontsize=16)
+#ax.legend(fontsize=16)
 
 #%%
 ## calculate the profit
 import math
+def AassetChange(money, currentStockValue, numOfStock):
+    totalAsset = money + numOfStock*(currentStockValue*1000)
+    return totalAsset
 
-setPro = 1000000 #initial asset
-singleStock = stock0050['close'][0] * 1000 #one stock value (a slice)
+setAsset = 1000000 #initial asset
 #in initial time, we can buy how much stock?
-numStock = math.floor(setPro / singleStock)
+numStock = math.floor(setAsset / (stock0050['close'][0]*1000))
 #in initial time, we still have how much money?
-iniMoney = setPro - numStock*singleStock
+money = setAsset - numStock*(stock0050['close'][0]*1000)
 #track the (a share of )stock varius
-assetStock      = stock0050['close']*1000*numStock
-trackMoneyStand = (iniMoney + assetStock)/setPro;
+trackMoneyStand = AassetChange(money, stock0050['close'], numStock)/setAsset
 
-# == plot == 
-ax2 = fig.add_subplot(2, 1, 2) #create ax within figure
 
-ax2.plot(stock0050['date'], trackMoneyStand, color='red',label='close')
+#== plot == 
+fig2 = plt.figure(figsize=(16,12)) #create figure
+ax2 = fig2.add_subplot(1, 1, 1) #create ax within figure
+
+ax2.plot(stock0050['date'], trackMoneyStand, color='red')
 
 ax2.xaxis.set_major_locator(ticker.MultipleLocator(60)) #set xTicks interval 
 ax2.xaxis.set_tick_params(rotation=45,labelsize=10,colors='g') #setting xticks
@@ -75,7 +78,6 @@ ax2.grid(which='minor', axis='both')
 ax2.set_title('Asset varius',fontsize=18)
 ax2.set_ylabel('profit', fontsize='x-large',fontstyle='oblique')
 ax2.set_xlabel('date', fontsize=18,fontfamily = 'sans-serif',fontstyle='italic')
-ax2.legend(fontsize=16)
 
 
 
