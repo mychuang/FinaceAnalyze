@@ -25,9 +25,9 @@ def stockCrawl(stockID, start, end):
         stockData = dl.feature.add_kline_margin_purchase_short_sale(stockData)
         return stockData 
     
-stockId = '0050'
-bigin   = '2011-08-06'
-end     = '2021-08-06'
+stockId = '2303'
+bigin   = '2006-08-06'
+end     = '2016-08-06'
 stockData = stockCrawl(stockId, bigin, end)
 
 
@@ -219,7 +219,7 @@ for i in range(2, len(df_adj)):
     
     stockVar=0; moneyVar=0; assetVar=0
 
-handleAsset    = (handleAsset/intAssset) - 1
+handleAsset    = (handleAsset/intAssset)
 #handleAsset    = np.around(handleAsset, decimals=2)
 
 #%%    
@@ -256,7 +256,7 @@ numStock = math.floor(setAsset / (stockCTL['open'][0]*1000))
 #in initial time, we still have how much money?
 money = setAsset - numStock*(stockCTL['open'][0]*1000)
 #track the (a share of )stock varius
-trackMoneyStand = (AassetChange(money, stockCTL['open'], numStock)/setAsset)-1
+trackMoneyStand = (AassetChange(money, stockCTL['open'], numStock)/setAsset)
 
 #%%
 
