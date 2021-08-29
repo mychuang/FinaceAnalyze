@@ -55,12 +55,6 @@ class RequestStockList:
         dfETF = dfETF[dfETF['公開發行/上市(櫃)/發行日'] <= self.thresholdTime]       
         return dfETF
 
-#%%
-getDataObj = RequestStockList("2007-01-01")
-df1 = getDataObj.getMarkStock()
-df2 = getDataObj.getContStock()
-df3 = getDataObj.getETFStock()
-
 
 
 
