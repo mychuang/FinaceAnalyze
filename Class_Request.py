@@ -54,8 +54,44 @@ class RequestStockList:
                 datetime.strptime(dfETF['公開發行/上市(櫃)/發行日'][i], self.dateFormatter)
         dfETF = dfETF[dfETF['公開發行/上市(櫃)/發行日'] <= self.thresholdTime]       
         return dfETF
-
-
+    
+class RequestStock:
+    def __init__(self, stockID, year, month):
+        self.stockID = stockID
+        self.year = year;
+        self.month = month;
+    
+    def getMonthlyStock(self):
+        
+        if(self.month<10):
+            date = str(self.year)+'0'+str(self.month)+'01'
+        else:
+            date = str(self.year)+'0'+str(self.month)+'01'
+        webSite = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=html&date="+date+"&stockNo="+self.stockID
+        
+        import pandas as pd
+        import requests
+        
+        res = requests.get(webSite)
+        df = pd.read_html(res.text)[0]
+        
+        # Rename data
+        df.columns = ["date", "tradingVolumn", "tradingMoney", "open", "max", "min", "close", "spread", "成交筆數"]
+        df = df.drop(['spread'], axis=1)
+        df = df.drop(['成交筆數'], axis=1)
+        
+        # Rename date to index
+        d = df['date']
+        for i in range(len(d)):
+            df['date'].iloc[i] = d.iloc[i].replace(d.iloc[i][0:3], str(int(d.iloc[i][0:3]) + 1911))
+        
+        df['date'] = pd.to_datetime(df['date']) 
+        df = df.set_index(['date'], drop=True)
+        return df
+    
+    
+        
+        
 
 
 
