@@ -6,39 +6,56 @@ Created on Sun Aug 29 09:57:11 2021
 @author: miller
 """
 
-from Class_Request import RequestStockList
-
-requestObj = RequestStockList("2007-01-01")
-
-stockList = requestObj.getMarkStock()
-
 #%%
 # == psudo code ==
 # 1. get stock list -> done  
-# 2. get each stock info for every stock list
+# 2. get each stock info for every stock list -> done
+# 3. read stock data
 # 3. clean data
 # 4. get signal
 # 5. trading
 
 #%%
-from Class_GetStock import SingleStock
-import pandas as pd
 import os 
 filePath = os.getcwd()+"/stockDataofMark/"
+fileName = '1203'+'.csv'
+
+import pandas as pd
+stock = pd.read_csv(filePath+fileName)
 
 
-for i in stockList.index:
-    if(i>=151 and i<201):
-        print("num of stock:", i)
-        stockObj = SingleStock(stockList['有價證券代號'][i], "2006-01-01", "2017-01-01")
-        stock    = stockObj.stockCrawl()
-        
-        
-        fileName = stockList['有價證券代號'][i]+".csv"
-        stock.to_csv(filePath+fileName)
-        del stockObj
 #%%
-stockObj = SingleStock('1101', "2006-01-01", "2017-01-01")
-stock    = stockObj.stockCrawl()
+import os
+import pandas as pd
+ 
+filePath = os.getcwd()+"/stockDataofMark/"
+stockDic = {}
+
+with open(filePath+'log','r') as fh:
+    linelist = fh.readlines()
+    #strip()去除換行字元(\n)和空白字元
+    for i in range(len(linelist)):
+        linelist[i] = linelist[i].strip()
+        print('reading file: ', linelist[i])
+        stock = pd.read_csv(filePath + linelist[i])
+        stockDic.setdefault(linelist[i], stock)
+    
+#%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
