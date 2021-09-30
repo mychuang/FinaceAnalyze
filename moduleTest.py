@@ -172,8 +172,14 @@ for i in stockList.index:
         except:
             print("error stock:", i, stockList['有價證券代號'][i])
 
+#%%
+from Class_GetStock import SingleStock
+filePath = os.getcwd()
 
-
+stockObj = SingleStock('0050', "2006-01-01", "2017-01-01")
+stock    = stockObj.stockCrawl()
+fileName = "0050.csv"
+stock.to_csv(fileName)
 
 
 
