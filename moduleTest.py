@@ -181,6 +181,27 @@ stock    = stockObj.stockCrawl()
 fileName = "0050.csv"
 stock.to_csv(fileName)
 
+#%% == Load ETF ==
+#台灣50, MSCI, 高股息, fh富時不動產, 美元, 美債
+listData = ['0050', '0055', '0056', '00712', '00682U', '00679B']
+import os
+import time
+from Class_GetStock import SingleStock
+
+filePath = os.getcwd()+"/ETF/"
+for index in range(len(listData)):
+    print('loading: ',listData[index])
+    stockObj = SingleStock(listData[index], "2018-01-01", "2021-01-01")
+    stock    = stockObj.stockCrawl()
+    fileName = listData[index]+".csv"
+    stock.to_csv(filePath+fileName)
+    del stockObj
+    time.sleep(10)
+
+
+
+
+
 
 
 
