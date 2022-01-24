@@ -65,8 +65,10 @@ class RequestStock:
         
         if(self.month<10):
             date = str(self.year)+'0'+str(self.month)+'01'
+            print(date)
         else:
-            date = str(self.year)+'0'+str(self.month)+'01'
+            date = str(self.year)+str(self.month)+'01'
+            print(date)
         webSite = "https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=html&date="+date+"&stockNo="+self.stockID
         
         import pandas as pd

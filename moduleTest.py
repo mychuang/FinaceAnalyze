@@ -174,12 +174,12 @@ for i in stockList.index:
 
 #%%
 from Class_GetStock import SingleStock
-filePath = os.getcwd()
+filePath = os.getcwd()+"/ETF/"
 
-stockObj = SingleStock('0050', "2006-01-01", "2017-01-01")
+stockObj = SingleStock('01004T', "2018-01-01", "2021-01-01")
 stock    = stockObj.stockCrawl()
-fileName = "0050.csv"
-stock.to_csv(fileName)
+fileName = "01004T.csv"
+stock.to_csv(filePath+fileName)
 
 #%% == Load ETF ==
 #台灣50, MSCI, 高股息, fh富時不動產, 美元, 美債
@@ -197,6 +197,33 @@ for index in range(len(listData)):
     stock.to_csv(filePath+fileName)
     del stockObj
     time.sleep(10)
+    
+#%% == Load ETF frm 證交所
+import time
+from Class_Request import RequestStock
+import pandas as pd
+
+model = RequestStock('01004T', 2018, 1)
+test = model.getMonthlyStock()
+del model
+time.sleep(10)
+
+for year in range(2018, 2021):
+    for month in range(1,13):
+        model = RequestStock('01004T', year, month)
+        test2 = model.getMonthlyStock()
+        test = pd.concat([test, test2])
+        del model
+        time.sleep(12)
+
+
+
+
+#%%
+import os
+filePath = os.getcwd()+"/ETF/"
+fileName = "01004T.csv"
+test.to_csv(filePath+fileName)
 
 
 
