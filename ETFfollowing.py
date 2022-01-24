@@ -10,7 +10,7 @@ import os
 import pandas as pd
 import numpy as np
 
-#%% reading ETF data
+#reading ETF data
 
 filePath = os.getcwd()+"/ETF/"
 stockDic = {}
@@ -27,12 +27,44 @@ with open(filePath+'log','r') as fh:
         stock = stock.drop(['date'], axis = 1)
         stockDic.setdefault(linelist[i], stock)
         dicKeys = np.append(dicKeys, linelist[i])
-#%% sort data to 0050 
-# data clean -> add [i-1]
+#%%
+import numpy as np
+filePath = os.getcwd()+"/ETF/"
+fileName = "01004T.csv"
+estVar2 = pd.read_csv(filePath+fileName)
+estVar2.index = pd.DatetimeIndex(estVar2['date'])
+estVar2 = estVar2.drop(['date'], axis = 1)
+
+drop = np.array([])
+extractExpIndex = estVar2.index
+for i in range(len(extractExpIndex)):
+    if(estVar2['tradingVolumn'][i] == 0):
+        drop = np.append(drop, extractExpIndex[i])
+        
+for i in range(len(drop)):
+    estVar2 = estVar2.drop(drop[i])
+
+estVar2 = estVar2.drop(extractExpIndex[0])
+estVar2 = estVar2.drop(extractExpIndex[1])
+
+est01004 = np.array([])
+for i in range(len(estVar2)):
+    if(estVar2['open'][i] == '--'):
+        est01004 = np.append(est01004, float(estVar2['open'][i-1]))
+    else:
+        est01004 = np.append(est01004, float(estVar2['open'][i]))
 
 Col = stockDic['0050.csv'].columns
 extractCtlIndex = stockDic['0050.csv'].index
+est01004 = pd.Series(est01004.tolist(), index=extractCtlIndex)
+
+#%% sort data to 0050 
+# data clean -> add [i-1]
+import numpy as np
+Col = stockDic['0050.csv'].columns
+extractCtlIndex = stockDic['0050.csv'].index
 lenCtl = len(extractCtlIndex)
+ 
 #%%
 import numpy as np
 for dicIndex in range(1,6):
@@ -82,6 +114,7 @@ for dicIndex in range(1,6):
         lenExp = len(extractExpIndex) #update for while loop statement
     stockDic[dicKeys[dicIndex]] = exp
 
+
 #%% follow weighting index
 # 台灣50, MSCI, 高股息, fh富時不動產, 美元, 美債
 #['0050', '0055', '0056', '00712', '00682U', '00679B']
@@ -97,14 +130,19 @@ for i in range(len(stockVar)-1):
         stockVar['open'][i] = stockVar['open'][i+1]
     if(np.isnan(estimateVar['open'][i])):
         estimateVar['open'][i] = estimateVar['open'][i+1]
-    if(np.isnan(moneyVar['open'][i]) or moneyVar['open'][i] == 0):
-        moneyVar['open'][i] = moneyVar['open'][i-1]
+    #if(np.isnan(moneyVar['open'][i]) or moneyVar['open'][i] == 0):
+    #    moneyVar['open'][i] = moneyVar['open'][i+1]
     if(np.isnan(bondVar['open'][i])):
         bondVar['open'][i] = bondVar['open'][i+1]
 
+#weightIndex = stockVar['open'] * wstock + \
+#              estimateVar['open'] * westimate + \
+#              bondVar['open'] * wbond + \
+#              moneyVar['open'] * wmoney
+
 weightIndex = stockVar['open'] * wstock + \
-              estimateVar['open'] * westimate + \
-              bondVar['open'] * wbond + \
+              est01004 * westimate + \
+              bondVar['open'] * wbond  + \
               moneyVar['open'] * wmoney
 #%%
 weightIndex = weightIndex / weightIndex[0]
@@ -115,6 +153,7 @@ stockIndex   = stockVar['open']/ stockVar['open'][0]
 estimatIndex = estimateVar['open']/ estimateVar['open'][0] 
 moneyIndex   = moneyVar['open']/ moneyVar['open'][0]
 bondIndex    = bondVar['open']/ bondVar['open'][0]
+est01004Index = est01004/est01004[0]
 
 #%% plot
 
@@ -127,6 +166,7 @@ ax = fig.add_subplot(2, 1, 1) #create ax within figure
 
 ax.plot(ctlIndex, color='dimgray', label='0050')
 ax.plot(weightIndex, color='red', label='Muti')
+ax.plot(stockIndex, color='darkorange', label='0056')
 
 ax.xaxis.set_major_locator(ticker.MultipleLocator(80)) #set xTicks interval
 ax.axes.xaxis.set_ticklabels([]) #hide xTicks 
@@ -142,7 +182,8 @@ ax.legend(fontsize=16)
 ax2 = fig.add_subplot(2, 1, 2) #create ax within figure
 
 ax2.plot(stockIndex, color='darkorange', label='0056')
-ax2.plot(estimatIndex, color='darkgoldenrod', label='00712')
+#ax2.plot(estimatIndex, color='darkgoldenrod', label='00712')
+ax2.plot(est01004Index, color='darkgoldenrod', label='01004T')
 ax2.plot(moneyIndex, color='thistle', label='00682U')
 ax2.plot(bondIndex, color='steelblue', label='00679B')
 
@@ -156,9 +197,7 @@ ax2.set_title('Raw data',fontsize=18)
 ax2.set_ylabel('profit', fontsize='x-large',fontstyle='oblique')
 ax2.legend(fontsize=16)
 
-
-
-
+plt.show()
 
 
 
